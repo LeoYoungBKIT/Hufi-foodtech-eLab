@@ -4,7 +4,7 @@ var package = require('./package.json');
 
 // variables
 var isProduction = process.argv.indexOf('-p') >= 0 || process.env.NODE_ENV === 'production';
-var sourcePath = path.join(__dirname, './src');
+var sourcePath = path.join(__dirname, './');
 var outPath = path.join(__dirname, './build');
 
 // plugins
@@ -15,7 +15,7 @@ var { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   context: sourcePath,
   entry: {
-    app: './main.tsx'
+    app: './src/index.tsx'
   },
   output: {
     path: outPath,
@@ -86,6 +86,11 @@ module.exports = {
       {
         test: /\.(jpe?g|gif|bmp|mp3|mp4|ogg|wav|eot|ttf|woff|woff2)$/,
         use: 'file-loader'
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
+        exclude: /node_modules/,
+        use: ['file-loader?name=[name].[ext]'] // ?name=[name].[ext] is only necessary to preserve the original file name
       }
     ]
   },
@@ -118,7 +123,9 @@ module.exports = {
       disable: !isProduction
     }),
     new HtmlWebpackPlugin({
-      template: 'assets/index.html',
+      template: './public/index.html',
+      filename: './index.html',
+      favicon: './public/favicon.png',
       minify: {
         minifyJS: true,
         minifyCSS: true,
